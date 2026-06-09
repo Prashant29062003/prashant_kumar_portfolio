@@ -1,1 +1,35 @@
-{}
+{
+  "id": "pg-discovery-platform",
+  "slug": "pg-discovery-platform",
+  "title": "PostgreSQL Discovery & Schema Analysis Platform",
+  "summary": "Built a schema exploration tool that indexes PostgreSQL databases and generates interactive ER diagrams, impact analyses, and migration diffs.",
+  "description": "Schema discovery and analysis tool for PostgreSQL databases",
+  "featuredRank": 20,
+  "scope": "personal",
+  "status": "completed",
+  "role": "Backend Developer",
+  "teamSize": 2,
+  "duration": "4 months",
+  "year": 2024,
+  "completedAt": "2024-12",
+  "technologies": [
+    "TypeScript",
+    "Node.js",
+    "PostgreSQL",
+    "Express",
+    "React",
+    "Redis"
+  ],
+  "outcomes": [
+    "Automated schema documentation generation",
+    "Reduced manual schema audit time",
+    "Enabled safe migration planning"
+  ],
+  "metrics": [
+    { "label": "Tables Indexed", "value": "200K+" },
+    { "label": "Search Latency", "value": "<2s" },
+    { "label": "Databases Supported", "value": "50+" }
+  ],
+  "github": "https://github.com/prashant/pg-discovery-platform",
+  "image": "/images/projects/pg-discovery.jpg"
+}

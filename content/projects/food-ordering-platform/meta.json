@@ -1,1 +1,35 @@
-{}
+{
+  "id": "food-ordering-platform",
+  "slug": "food-ordering-platform",
+  "title": "Multi-Vendor Food Ordering Platform",
+  "summary": "Developed a real-time food ordering system with multi-vendor support, live order tracking, and automated dispatch logic.",
+  "description": "Real-time multi-vendor food ordering and delivery platform",
+  "featuredRank": 30,
+  "scope": "professional",
+  "status": "completed",
+  "role": "Solo Developer",
+  "teamSize": 1,
+  "duration": "6 weeks",
+  "year": 2023,
+  "completedAt": "2023-06",
+  "technologies": [
+    "Next.js",
+    "Node.js",
+    "PostgreSQL",
+    "Socket.IO",
+    "Redis",
+    "Docker"
+  ],
+  "outcomes": [
+    "Enabled 12 vendors to manage orders digitally",
+    "Reduced order processing time",
+    "Provided real-time order visibility"
+  ],
+  "metrics": [
+    { "label": "Orders/Day", "value": "100+" },
+    { "label": "Uptime", "value": "99.9%" },
+    { "label": "Vendors Onboarded", "value": "12" }
+  ],
+  "github": "https://github.com/prashant/food-ordering-platform",
+  "image": "/images/projects/food-ordering.jpg"
+}
