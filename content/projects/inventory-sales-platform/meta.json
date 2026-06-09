@@ -1,0 +1,28 @@
+{
+  "id": "inventory-sales-platform",
+  "slug": "inventory-sales-platform",
+  "title": "Inventory & Sales Management Platform",
+  "summary": "Built a centralized inventory and sales workflow platform replacing spreadsheet-driven operations.",
+  "description": "Centralized inventory tracking and sales workflows",
+  "featuredRank": 10,
+  "scope": "personal",
+  "status": "completed",
+  "role": "Full-Stack Developer",
+  "teamSize": 1,
+  "duration": "3 months",
+  "year": 2024,
+  "completedAt": "2024-08",
+  "technologies": ["React", "Node.js", "Express", "MongoDB"],
+  "outcomes": [
+    "Centralized inventory workflows",
+    "Reduced manual reconciliation",
+    "Improved stock visibility"
+  ],
+  "metrics": [
+    { "label": "API Endpoints", "value": "35+" },
+    { "label": "Users", "value": "500+" },
+    { "label": "Inventory Items", "value": "10,000+" }
+  ],
+  "github": "https://github.com/prashant/inventory-sales-platform",
+  "image": "/images/projects/inventory.jpg"
+}
