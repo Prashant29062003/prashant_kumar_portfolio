@@ -1,0 +1,42 @@
+%% PG Discovery Platform — Owner CMS Flow
+%% Authenticated owner journey through admin dashboard
+
+flowchart TD
+    A[Owner] -->|Sign In| B[Clerk Auth]
+    B -->|Redirect| C[Admin Dashboard]
+
+    C --> D[Manage PGs]
+    C --> E[Manage Rooms]
+    C --> F[Manage Beds]
+    C --> G[Manage Guests]
+    C --> H[Safety Audits]
+    C --> I[View Enquiries]
+
+    D --> D1[Create PG]
+    D --> D2[Edit PG]
+    D --> D3[Delete PG]
+    D --> D4[Mark Featured]
+    D --> D5[Upload Images]
+
+    E --> E1[Add Room]
+    E --> E2[Edit Room]
+    E --> E3[Set Type & Price]
+
+    F --> F1[Add Bed]
+    F --> F2[Toggle Occupancy]
+
+    G --> G1[Check-in Guest]
+    G --> G2[Check-out Guest]
+    G --> G3[Filter by Status]
+
+    H --> H1[Create Audit]
+    H --> H2[Set Category:<br/>Fire/Electrical/<br/>Structural/Health/Security]
+    H --> H3[Mark: Compliant/<br/>Warning/Critical]
+
+    I --> I1[Filter: New/Contacted/Closed]
+    I --> I2[Update Status]
+
+    D1 --> J[Server Action: Zod Validate]
+    J --> K[Insert/Update PostgreSQL]
+    K --> L[Revalidate Cache]
+    L --> C

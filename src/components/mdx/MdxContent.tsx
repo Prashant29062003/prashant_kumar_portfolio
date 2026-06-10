@@ -5,6 +5,7 @@ import { MermaidRenderer } from "./MermaidRenderer";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import remarkGfm from "remark-gfm";
+import { cn } from "@/lib/utils";
 import React from "react";
 
 type HeadingProps = React.ComponentPropsWithoutRef<"h1">;
@@ -107,7 +108,7 @@ const components = {
   pre: ({ children }: PreProps) => {
     const child = Array.isArray(children) ? children[0] : children;
     const childWithProps = child as ChildWithProps;
-    if (childWithProps?.props?.className === "language-mermaid") {
+    if (childWithProps?.props?.className?.includes?.("language-mermaid")) {
       return <MermaidRenderer code={childWithProps.props.children as string} />;
     }
     return (
@@ -118,9 +119,12 @@ const components = {
       </Card>
     );
   },
-  code: (props: CodeProps) => (
+  code: ({ className, ...props }: CodeProps) => (
     <code
-      className="bg-muted/50 text-foreground rounded px-1.5 py-0.5 font-mono text-xs"
+      className={cn(
+        "bg-muted/50 text-foreground rounded px-1.5 py-0.5 font-mono text-xs",
+        className
+      )}
       {...props}
     />
   ),

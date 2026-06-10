@@ -1,0 +1,13 @@
+%% PG Discovery Platform — System Context Diagram
+%% High-level architecture showing actors, the Next.js monolith,
+%% and external services
+
+flowchart LR
+    A[Visitor Browser] -->|Browse & Search| B[Next.js App]
+    C[Owner Browser] -->|Manage Inventory| B
+
+    B -->|Server Components<br/>Public reads| D[(PostgreSQL<br/>Neon)]
+    B -->|Server Actions<br/>Mutations| D
+    B -->|Authentication| E[Clerk Auth]
+    B -->|Image Upload / CDN| F[Cloudinary]
+    B -->|Email Notifications| G[SMTP / Resend]

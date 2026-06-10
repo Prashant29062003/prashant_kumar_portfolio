@@ -1,0 +1,86 @@
+%% PG Discovery Platform — Database ER Diagram
+%% Generated from Drizzle ORM schema definitions
+%% Tables: pgs, rooms, beds, enquiries, guests, safety_audits
+
+erDiagram
+    PG ||--o{ ROOM : contains
+    ROOM ||--o{ BED : has
+    PG ||--o{ ENQUIRY : receives
+    PG ||--o{ GUEST : houses
+    ROOM ||--o{ GUEST : assigned
+    PG ||--o{ SAFETY_AUDIT : undergoes
+
+    PG {
+        string id PK
+        string slug UK
+        string name
+        string description
+        string address
+        string city
+        string locality
+        string gender "MALE | FEMALE | UNISEX"
+        boolean is_featured
+        boolean is_published
+        string amenities
+        string images
+        string phone_number
+        int available_beds
+        datetime created_at
+        datetime updated_at
+    }
+
+    ROOM {
+        string id PK
+        string pg_id FK
+        string room_number
+        int floor
+        string type "SINGLE | DOUBLE | TRIPLE | OTHER"
+        float base_price
+        float deposit
+        int capacity
+        string amenities
+        boolean is_available
+        datetime created_at
+    }
+
+    BED {
+        string id PK
+        string room_id FK
+        string bed_number
+        boolean is_occupied
+    }
+
+    ENQUIRY {
+        string id PK
+        string pg_id FK
+        string name
+        string phone
+        string email
+        string message
+        string status "NEW | CONTACTED | CLOSED"
+        string room_type
+        datetime move_in_date
+        datetime created_at
+    }
+
+    GUEST {
+        string id PK
+        string pg_id FK
+        string room_id FK
+        string name
+        string phone
+        datetime check_in
+        datetime check_out
+        string status
+        datetime created_at
+    }
+
+    SAFETY_AUDIT {
+        string id PK
+        string pg_id FK
+        string category "FIRE | ELECTRICAL | STRUCTURAL | HEALTH | SECURITY"
+        string status "COMPLIANT | WARNING | CRITICAL"
+        string notes
+        string inspected_by
+        datetime inspected_at
+    }

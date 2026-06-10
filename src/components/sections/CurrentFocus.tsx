@@ -1,6 +1,6 @@
 ﻿export default function CurrentFocus() {
   return (
-    <section className="py-16">
+    <section className="pb-24">
       <h2 className="text-2xl font-semibold tracking-tight">Current Focus</h2>
       <ul className="mt-6 space-y-3">
         {[

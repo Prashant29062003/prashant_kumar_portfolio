@@ -1,35 +1,40 @@
 {
   "id": "pg-discovery-platform",
   "slug": "pg-discovery-platform",
-  "title": "PostgreSQL Discovery & Schema Analysis Platform",
-  "summary": "Built a schema exploration tool that indexes PostgreSQL databases and generates interactive ER diagrams, impact analyses, and migration diffs.",
-  "description": "Schema discovery and analysis tool for PostgreSQL databases",
-  "featuredRank": 20,
+  "title": "PG Discovery & Management Platform",
+  "summary": "Built a full-stack PG accommodation discovery portal with an owner CMS for property, room, bed, and guest management.",
+  "description": "Full-stack platform for discovering and managing Paying Guest accommodations",
+  "featuredRank": 15,
   "scope": "personal",
   "status": "completed",
-  "role": "Backend Developer",
+  "role": "Full Stack Developer",
   "teamSize": 2,
   "duration": "4 months",
-  "year": 2024,
-  "completedAt": "2024-12",
+  "year": 2026,
+  "completedAt": "2026-04",
   "technologies": [
+    "Next.js",
     "TypeScript",
-    "Node.js",
     "PostgreSQL",
-    "Express",
-    "React",
-    "Redis"
+    "Drizzle ORM",
+    "Clerk",
+    "Tailwind CSS",
+    "Cloudinary",
+    "shadcn/ui",
+    "Zod"
   ],
   "outcomes": [
-    "Automated schema documentation generation",
-    "Reduced manual schema audit time",
-    "Enabled safe migration planning"
+    "Launched a live MVP indexing 50+ PG properties across 4 cities",
+    "Enabled property owners to manage inventory with zero technical knowledge",
+    "Achieved sub-second page loads on public discovery pages"
   ],
   "metrics": [
-    { "label": "Tables Indexed", "value": "200K+" },
-    { "label": "Search Latency", "value": "<2s" },
-    { "label": "Databases Supported", "value": "50+" }
+    { "label": "Properties Listed", "value": "50+" },
+    { "label": "Cities Covered", "value": "4" },
+    { "label": "Page Load Time", "value": "<1s" },
+    { "label": "Safety Categories", "value": "5" }
   ],
   "github": "https://github.com/prashant/pg-discovery-platform",
-  "image": "/images/projects/pg-discovery.jpg"
+  "liveUrl": "https://pg-discovery-platform.vercel.app",
+  "image": "/images/projects/pg-discovery-platform.jpg"
 }

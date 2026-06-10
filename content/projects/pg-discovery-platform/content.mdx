@@ -1,28 +1,31 @@
 ## Overview
 
-Engineering teams managing growing PostgreSQL deployments often lack visibility into their schema — what tables exist, how they relate, which columns are indexed, and what impact a migration might have. This platform indexes PostgreSQL database schemas and provides interactive exploration, impact analysis, and migration diff generation.
+PG Discovery & Management Platform is a full-stack web application that connects students and working professionals with verified Paying Guest (PG) accommodations across Indian cities. It features a public discovery portal for browsing and filtering properties, and a comprehensive owner CMS for managing PGs, rooms, beds, guests, and safety audits.
+
+Built as a Next.js monolith with server components and server actions, the platform was designed to be serverless-friendly, cost-efficient, and SEO-optimized from day one.
 
 ## Problem
 
-A team managing 50+ PostgreSQL databases across staging, production, and analytics environments had no centralized schema documentation. When planning migrations, engineers manually traced foreign key relationships, checked index coverage, and reviewed column types across databases. A simple column rename required cross-referencing 5+ sources. Schema drift between environments went unnoticed until deployment failed.
+PG owners in India relied on offline word-of-mouth and scattered WhatsApp groups to find tenants, while students and professionals spent days visiting properties in person to find suitable accommodation. No centralized, searchable platform existed that let owners showcase their properties or let seekers filter by city, gender, amenities, and budget. Property inventory (rooms, beds, occupancy) was tracked in spreadsheets or not at all. Safety compliance — fire safety, electrical, structural — had no audit trail.
 
 ## Requirements
 
-- Connect to PostgreSQL databases and extract full schema metadata
-- Generate interactive ER diagrams for visual exploration
-- Impact analysis — show what breaks if a column/table is modified
-- Migration diff generation between two schema snapshots
-- Search across all indexed schemas (tables, columns, indexes, constraints)
-- Multi-user support with saved annotations on schema elements
-- Handle 10,000+ tables across multiple databases without performance issues
+- Public discovery portal with city/gender/amenity filters and SEO-friendly URLs
+- Owner admin dashboard for PG, room, and bed management
+- Guest check-in/check-out tracking with status filters
+- Safety audit system with five audit categories and compliance status
+- Enquiry intake system with anti-spam rules (1 per phone per PG per 24h)
+- Responsive, mobile-first design with dark mode support
+- Secure authentication via Clerk with protected admin routes
+- Type-safe database access with automated migrations
+- Image management with automatic fallbacks and Cloudinary hosting
 
 ## Constraints
 
-- Two-person team (backend + frontend) with 4 months
-- Databases could not be modified — read-only access only
-- Schema metadata extraction had to complete within 30 seconds for a database with 1,000+ tables
-- Impact analysis required historical snapshots — needed to store schema versions over time
-- Security: credentials could not be stored in plaintext; database connections had to use temporary tokens via vault
+- Solo/2-person team with a 4-month MVP timeline
+- No budget for paid services beyond free tiers (Neon, Clerk, Cloudinary)
+- Must be serverless-deployable to keep hosting costs near zero
+- No background workers or job queues in Phase-0
 
 ## Architecture
 
@@ -30,97 +33,253 @@ A team managing 50+ PostgreSQL databases across staging, production, and analyti
 
 ```mermaid
 flowchart LR
-    A[User Browser] --> B[Next.js App]
-    B --> C[Express API]
-    C --> D[(PostgreSQL - Metadata)]
-    C --> E[(Redis - Cache)]
-    C --> F[PostgreSQL Databases]
-    F -->|Read-only| G[Schema Extractor]
-    G --> C
-    C --> H[S3 - Schema Snapshots]
-    C --> I[Vault - Credentials]
+    A[Visitor Browser] -->|Browse & Search| B[Next.js App]
+    C[Owner Browser] -->|Manage Inventory| B
+
+    B -->|Server Components<br/>Public reads| D[(PostgreSQL<br/>Neon)]
+    B -->|Server Actions<br/>Mutations| D
+    B -->|Authentication| E[Clerk Auth]
+    B -->|Image Upload / CDN| F[Cloudinary]
+    B -->|Email Notifications| G[SMTP / Resend]
 ```
 
 ### Request Flow
 
-1. User registers a database by providing a name and temporary Vault token
-2. Backend requests a short-lived credential from Vault
-3. Schema Extractor connects read-only, queries `information_schema` tables, `pg_class`, and `pg_index` to extract full metadata
-4. Extracted schema is stored as a versioned JSON snapshot in PostgreSQL metadata store and S3
-5. A background job analyzes relationships to build the foreign key graph
-6. User can then browse tables, view ER diagrams, generate diffs, and run impact analysis
+1. Visitor lands on the public site; Next.js Server Component fetches PG listings from PostgreSQL and renders HTML server-side for fast TTFB and SEO
+2. Visitor filters by city or gender — query params update the server component request, returning filtered results without client-side data fetching
+3. Visitor submits an enquiry via a Route Handler — validated server-side with Zod, checked against the 24h anti-spam rule, then inserted into the database
+4. Owner signs in via Clerk — middleware checks auth state and redirects unauthenticated users to the sign-in page
+5. Owner creates/edits a PG, room, or bed — form data is validated client-side (React Hook Form) and server-side (Zod schema), then persisted via Server Action
+6. Image uploads go directly to Cloudinary via signed upload presets — only the returned URL is stored in PostgreSQL
 
 ### Database Design
 
-The metadata store uses PostgreSQL itself to store schema snapshots:
-
 ```
-databases: {
-  id, name, engine_version,
-  created_at, updated_at
+pgs: {
+  id, slug, name, description, images[], amenities[],
+  city, locality, gender, is_featured, is_published,
+  lat, lng, available_beds, created_at, updated_at
 }
 
-schema_snapshots: {
-  id, database_id, version,
-  tables: JSON,  -- array of table definitions
-  relationships: JSON,  -- foreign key graph
-  captured_at
+rooms: {
+  id, pg_id, room_number, floor, type,
+  base_price, deposit, capacity, amenities[],
+  is_available, created_at, updated_at
 }
 
-tables: {
-  id, snapshot_id, schema_name, table_name,
-  columns: [{ name, type, nullable, default, is_primary_key }],
-  indexes: [{ name, columns, unique, type }],
-  constraints: [{ name, type, columns, references }],
-  row_count_estimate,
-  total_size_bytes
+beds: {
+  id, room_id, is_occupied, bed_number
 }
+
+enquiries: {
+  id, pg_id, name, email, phone, message,
+  room_type, move_in_date, status, created_at
+}
+
+guests: {
+  id, pg_id, room_id, bed_id, name, phone,
+  check_in, check_out, status
+}
+
+safety_audits: {
+  id, pg_id, category, status, notes,
+  inspected_by, inspected_at
+}
+```
+
+```mermaid
+erDiagram
+    PG ||--o{ ROOM : contains
+    ROOM ||--o{ BED : has
+    PG ||--o{ ENQUIRY : receives
+    PG ||--o{ GUEST : houses
+    ROOM ||--o{ GUEST : assigned
+    PG ||--o{ SAFETY_AUDIT : undergoes
+
+    PG {
+        string id PK
+        string slug UK
+        string name
+        string description
+        string address
+        string city
+        string locality
+        string gender "MALE | FEMALE | UNISEX"
+        boolean is_featured
+        boolean is_published
+        string amenities
+        string images
+        string phone_number
+        int available_beds
+        datetime created_at
+        datetime updated_at
+    }
+
+    ROOM {
+        string id PK
+        string pg_id FK
+        string room_number
+        int floor
+        string type "SINGLE | DOUBLE | TRIPLE | OTHER"
+        float base_price
+        float deposit
+        int capacity
+        string amenities
+        boolean is_available
+        datetime created_at
+    }
+
+    BED {
+        string id PK
+        string room_id FK
+        string bed_number
+        boolean is_occupied
+    }
+
+    ENQUIRY {
+        string id PK
+        string pg_id FK
+        string name
+        string phone
+        string email
+        string message
+        string status "NEW | CONTACTED | CLOSED"
+        string room_type
+        datetime move_in_date
+        datetime created_at
+    }
+
+    GUEST {
+        string id PK
+        string pg_id FK
+        string room_id FK
+        string name
+        string phone
+        datetime check_in
+        datetime check_out
+        string status
+        datetime created_at
+    }
+
+    SAFETY_AUDIT {
+        string id PK
+        string pg_id FK
+        string category "FIRE | ELECTRICAL | STRUCTURAL | HEALTH | SECURITY"
+        string status "COMPLIANT | WARNING | CRITICAL"
+        string notes
+        string inspected_by
+        datetime inspected_at
+    }
+```
+
+### Enquiry Submission Flow
+
+```mermaid
+flowchart LR
+    A[Visitor] -->|Browses PGs| B[Public Listing Page]
+    B -->|Clicks PG| C[PG Detail Page]
+    C -->|Fills Enquiry Form| D[Route Handler]
+    D -->|Validate with Zod| E{Valid?}
+    E -->|No| F[Return Error]
+    E -->|Yes| G{Anti-Spam Check<br/>1 per phone/PG/24h}
+    G -->|Violation| H[Reject Duplicate]
+    G -->|Pass| I[Insert into DB]
+    I --> J[Send Confirmation Email<br/>via MJML Template]
+    J --> K[Owner Notified via Email]
+    K --> L[Owner Updates Status:<br/>New → Contacted → Closed]
+```
+
+### Owner CMS Workflow
+
+```mermaid
+flowchart TD
+    A[Owner] -->|Sign In| B[Clerk Auth]
+    B -->|Redirect| C[Admin Dashboard]
+
+    C --> D[Manage PGs]
+    C --> E[Manage Rooms]
+    C --> F[Manage Beds]
+    C --> G[Manage Guests]
+    C --> H[Safety Audits]
+    C --> I[View Enquiries]
+
+    D --> D1[Create PG]
+    D --> D2[Edit PG]
+    D --> D3[Delete PG]
+    D --> D4[Mark Featured]
+    D --> D5[Upload Images]
+
+    E --> E1[Add Room]
+    E --> E2[Edit Room]
+    E --> E3[Set Type & Price]
+
+    F --> F1[Add Bed]
+    F --> F2[Toggle Occupancy]
+
+    G --> G1[Check-in Guest]
+    G --> G2[Check-out Guest]
+    G --> G3[Filter by Status]
+
+    H --> H1[Create Audit]
+    H --> H2[Set Category:<br/>Fire/Electrical/<br/>Structural/Health/Security]
+    H --> H3[Mark: Compliant/<br/>Warning/Critical]
+
+    I --> I1[Filter: New/Contacted/Closed]
+    I --> I2[Update Status]
+
+    D1 --> J[Server Action: Zod Validate]
+    J --> K[Insert/Update PostgreSQL]
+    K --> L[Revalidate Cache]
+    L --> C
 ```
 
 ## Key Decisions
 
-**PostgreSQL metadata stored in PostgreSQL**: Using the same database engine for storage was intentional — it meant we could use `information_schema` comparison logic written in SQL directly against our metadata. No impedance mismatch.
+**Next.js monolith over separate frontend + backend**: Using Next.js App Router with Server Components and Server Actions eliminated the need for a separate API layer in Phase-0. Public reads render entirely on the server, mutations go through type-safe Server Actions, and we avoided the complexity of maintaining two deployable services.
 
-**Snapshot-based versioning**: Instead of tracking incremental changes (which would require detecting what changed), we snapshot the full schema on each scan. Storage is cheap, and diffing two snapshots is straightforward JSON comparison. This also simplifies rollback analysis.
+**Drizzle ORM over Prisma or raw SQL**: Drizzle's lightweight, SQL-like API and first-class TypeScript support made it a natural fit. Unlike Prisma, it doesn't generate a heavy client — migrations are plain SQL, and queries are composable without magic strings.
 
-**Separate schema extractor process**: Extraction runs as a background job with configurable concurrency. For databases with 1,000+ tables, single-threaded extraction was too slow. The extractor parallelizes by schema namespace.
+**Clerk for auth over custom JWT**: Building auth correctly is hard. Clerk handles session management, password reset, MFA, and social login out of the box. Integration via `@clerk/nextjs` middleware is a few lines of code.
+
+**Cloudinary for images over local storage**: Offloading image transformation, optimization, and CDN delivery to Cloudinary meant no server-side image processing logic. Automatic fallback SVGs ensure broken images never show empty frames.
+
+**Schema-Validation-Action pattern**: Every feature module follows `*.schema.ts → *.actions.ts → database` flow. Zod schemas are the single source of truth for validation on both client and server — no duplication, no drift.
 
 ## Challenges
 
-**Extracting accurate metadata at scale**: PostgreSQL's `information_schema` is slow for databases with many columns. We optimized by querying `pg_catalog` directly and joining with `pg_stats` for column statistics. Performance improved from 45 seconds to 8 seconds for a 1,000-table database.
+**Ensuring type safety from database to UI**: With Drizzle's schema-first approach and Zod's runtime validation, every data path is typed. The challenge was maintaining this pipeline through Server Components (async, server-only) and client components (Zustand stores, optimistic updates). We solved it by keeping domain types in shared schemas and deriving insert/select types from Drizzle tables.
 
-**Foreign key graph construction**: Building the complete dependency graph required resolving cross-schema foreign keys, which PostgreSQL allows but `information_schema` doesn't expose cleanly. We had to query `pg_constraint` directly and resolve schema/table OIDs manually.
+**Image management with fallbacks**: Users could upload images that later became unavailable (deleted, expired URLs). We built a centralized fallback system with per-entity SVG definitions — if Cloudinary returns a 404, the component renders a context-aware placeholder (building icon for PGs, bed icon for rooms) without breaking the layout.
 
-**Impact analysis accuracy**: Determining "what breaks if this column is renamed" means transitively tracing all views, functions, triggers, and application queries that reference the column. Full static analysis was out of scope; we settled for reporting all direct dependencies in the schema (views, functions, triggers) and marking application-level analysis as a manual step.
+**Spam-resistant enquiry system**: Without a captcha service, we implemented server-side rate limiting — one enquiry per phone number per PG per 24-hour window. This required careful index design on (pg_id, phone, created_at) and atomic upsert logic in the Route Handler.
+
+**Responsive admin dashboard**: Building a full-featured admin CMS that works on both desktop and mobile was harder than expected. Sidebar collapse, responsive tables, and mobile-optimized forms required extensive Tailwind breakpoint tuning and a custom sidebar context via Zustand.
 
 ## Outcome
 
-- Reduced schema audit time from hours to minutes for the engineering team
-- Migration planning became safe — engineers could preview impact before writing migration scripts
-- Environment drift detection — automated comparison between staging and production schemas caught inconsistencies before deployments
-- The tool became the source of truth for schema documentation, replacing scattered wiki pages
+The Phase-0 MVP was deployed and is live at pg-discovery-platform.vercel.app. Property owners can now manage their full inventory — PGs, rooms, beds — through a clean dashboard. Visitors can browse properties across 4 cities, filter by gender and amenities, view detailed listings with images and pricing, and submit enquiries without creating an account. The platform achieves sub-second page loads on public pages, passes Lighthouse performance audits, and runs on free-tier infrastructure with zero monthly hosting cost.
 
 ## Lessons Learned
 
-1. **Read-only access is a hard constraint that simplifies design**. Not being able to modify databases forced us into a clean observer architecture. Adding advisory locks or audit triggers would have complicated the system significantly.
+1. **Server Components are not just a performance optimization — they simplify state management**. By rendering public pages entirely on the server, we eliminated the need for client-side data fetching libraries, loading states, and caching layers in Phase-0. The database is the single source of truth, and the URL is the only piece of client state needed.
 
-2. **Schema metadata is more complex than it seems**. PostgreSQL's catalog is rich but inconsistent across versions. Supporting 10+ minor versions required extensive testing and version-specific queries.
+2. **Drizzle's SQL-like API has a learning curve but pays off**. Unlike ORMs that abstract SQL away, Drizzle requires understanding joins, indexes, and query performance. The tradeoff is full control — we hand-tune every query and write raw SQL snippets when needed without fighting an abstraction layer.
 
-3. **Performance optimization should start at the query level**. The initial implementation blamed network latency, but the real bottleneck was naive `information_schema` queries. Rewriting against `pg_catalog` gave 5x improvement without any infrastructure changes.
+3. **Image fallbacks should be designed from day one**. Adding fallbacks after the fact meant auditing every image render path across the app. Building a centralized `FallbackImage` component with per-type SVGs upfront would have saved refactoring time.
 
 ## What I'd Do Differently Today
 
-**Architecture**: The separate schema extractor process was the right call, but it communicated via the API server, creating a bottleneck. Today I'd give the extractor its own write path to the metadata store and communicate results via an event bus (Redis pub/sub or NATS).
+**Testing strategy**: Phase-0 shipped with manual QA and Lighthouse audits only. For sub-2-person teams, I'd add Playwright tests for the three critical user journeys (visitor browsing → enquiry, owner auth → property creation, owner dashboard navigation) early. They catch regressions faster than manual clicking.
 
-**Snapshot storage**: JSON snapshots in PostgreSQL worked but querying them was awkward. Today I'd use a document store for snapshots and keep only current metadata + indexes in PostgreSQL. The hybrid approach would simplify both writing and querying.
+**Image upload UX**: Current upload flow requires entering image names manually. I'd auto-generate labels from file metadata and use Cloudinary's auto-tagging to suggest categories, reducing data entry friction for owners.
 
-**Impact analysis scope**: The decision to skip application-level static analysis was pragmatic but limited the tool's value. A v2 should support SQL query parsing to detect application-level dependencies. Tools like `pg_query` (libpg_query bindings) could parse raw SQL without a full database connection.
+**State management**: Zustand was used for sidebar state and a few UI toggles. In retrospect, React Context alone would have sufficed. The Zustand store added indirection without meaningful benefit for the amount of client state in Phase-0.
 
 ## Technical Debt & Limitations
 
-- **No real-time schema change detection**: The tool relies on periodic scans. A logical replication slot would enable real-time change detection.
-- **No query plan analysis**: Schema metadata is useful, but combining it with query execution plans would help identify missing indexes and slow patterns.
-- **Limited multi-engine support**: PostgreSQL only. MySQL and SQL Server support would require significant rework of the extraction layer.
-- **No RBAC within the tool**: Users could see all databases registered in the system. Fine-grained access control was deprioritized.
-- **Manual database registration**: Each database must be manually registered. Auto-discovery via network scan or cloud provider integration would improve adoption.
-- **Snapshot storage growth**: Full snapshots for every scan consume storage proportional to schema size x scan frequency. Incremental diff storage would reduce this.
+- **No tenant onboarding**: Phase-0 tracks guests manually. A tenant portal with rent ledger and communication history is the natural next phase.
+- **No payment integration**: Rent collection is still handled offline. Integrating Razorpay or Stripe would close the loop.
+- **No background jobs**: Safety audit reminders, enquiry follow-ups, and occupancy reports are manual. Adding a lightweight queue (e.g., Inngest) would automate these.
+- **No RBAC**: Every authenticated user sees all admin features. Sub-admin roles (e.g., staff who can only manage check-ins) are not implemented.
+- **Manual property seeding**: Properties were seeded via a script. An owner self-onboarding flow with verification would reduce friction.
+- **Single-region deployment**: Deployed on Vercel (us-east). Multi-region or edge deployment would improve latency for Indian users outside the US.

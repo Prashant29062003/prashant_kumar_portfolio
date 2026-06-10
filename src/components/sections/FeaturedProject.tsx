@@ -6,16 +6,21 @@ import { Separator } from "@/components/ui/separator";
 import { getFeaturedProjects } from "@/lib/content/projects";
 
 export default function FeaturedProject() {
-  const projects = getFeaturedProjects();
-  const featured = projects[0];
+  const featured = getFeaturedProjects()[0];
   if (!featured) return null;
 
   return (
     <section className="pb-24 antialiased">
       <h2 className="text-muted-foreground mb-6 font-mono text-sm tracking-wider uppercase">
-        Deep Dive Case Study
+        Featured Project
       </h2>
       <Card className="bg-muted/20 hover:border-muted-foreground/20 backdrop-blur-sm transition-all">
+        <div className="relative h-56 overflow-hidden rounded-t-xl">
+          <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 via-zinc-900 to-black" />
+          <span className="absolute bottom-6 left-6 text-6xl font-bold text-white/20 select-none">
+            {featured.title[0]}
+          </span>
+        </div>
         <CardContent className="p-6 sm:p-8">
           <Badge
             variant="outline"
@@ -43,7 +48,7 @@ export default function FeaturedProject() {
           <Separator className="mt-8 mb-6" />
           <Button variant="link" asChild className="group h-auto p-0">
             <Link href={"/projects/" + featured.slug}>
-              Read System Architecture Analysis
+              View Case Study
               <span className="ml-1.5 transform transition-transform duration-200 group-hover:translate-x-1">
                 &rarr;
               </span>

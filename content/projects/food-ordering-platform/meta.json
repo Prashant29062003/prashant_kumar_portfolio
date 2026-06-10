@@ -2,33 +2,25 @@
   "id": "food-ordering-platform",
   "slug": "food-ordering-platform",
   "title": "Multi-Vendor Food Ordering Platform",
-  "summary": "Developed a real-time food ordering system with multi-vendor support, live order tracking, and automated dispatch logic.",
-  "description": "Real-time multi-vendor food ordering and delivery platform",
+  "summary": "A frontend-only multi-vendor food ordering UI with real-time order tracking, vendor dashboards, and responsive mobile-first design.",
+  "description": "Frontend UI for a multi-vendor food ordering platform with vendor dashboards and real-time order tracking",
   "featuredRank": 30,
-  "scope": "professional",
+  "scope": "personal",
   "status": "completed",
   "role": "Solo Developer",
   "teamSize": 1,
   "duration": "6 weeks",
   "year": 2023,
   "completedAt": "2023-06",
-  "technologies": [
-    "Next.js",
-    "Node.js",
-    "PostgreSQL",
-    "Socket.IO",
-    "Redis",
-    "Docker"
-  ],
+  "technologies": ["Next.js", "React", "Tailwind CSS", "shadcn/ui"],
   "outcomes": [
-    "Enabled 12 vendors to manage orders digitally",
-    "Reduced order processing time",
-    "Provided real-time order visibility"
+    "Designed a responsive multi-vendor ordering interface with separate customer and vendor views",
+    "Built a real-time order tracking UI with status progression and vendor-specific sub-order displays",
+    "Implemented offline-capable vendor dashboard using localStorage for unreliable network conditions"
   ],
   "metrics": [
-    { "label": "Orders/Day", "value": "100+" },
-    { "label": "Uptime", "value": "99.9%" },
-    { "label": "Vendors Onboarded", "value": "12" }
+    { "label": "Vendor Views", "value": "Vendor + Customer + Admin" },
+    { "label": "Order States", "value": "6" }
   ],
   "github": "https://github.com/prashant/food-ordering-platform",
   "image": "/images/projects/food-ordering.jpg"

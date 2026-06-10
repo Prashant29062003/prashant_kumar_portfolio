@@ -1,0 +1,15 @@
+%% PG Discovery Platform — Enquiry Submission Flow
+%% Visitor journey from browse to enquiry confirmation
+
+flowchart LR
+    A[Visitor] -->|Browses PGs| B[Public Listing Page]
+    B -->|Clicks PG| C[PG Detail Page]
+    C -->|Fills Enquiry Form| D[Route Handler]
+    D -->|Validate with Zod| E{Valid?}
+    E -->|No| F[Return Error]
+    E -->|Yes| G{Anti-Spam Check<br/>1 per phone/PG/24h}
+    G -->|Violation| H[Reject Duplicate]
+    G -->|Pass| I[Insert into DB]
+    I --> J[Send Confirmation Email<br/>via MJML Template]
+    J --> K[Owner Notified via Email]
+    K --> L[Owner Updates Status:<br/>New → Contacted → Closed]

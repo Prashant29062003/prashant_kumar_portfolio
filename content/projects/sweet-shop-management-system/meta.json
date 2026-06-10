@@ -1,0 +1,47 @@
+{
+  "id": "sweet-shop-management-system",
+  "slug": "sweet-shop-management-system",
+  "title": "Sweet Shop Management System",
+  "summary": "A full-stack role-based sweet shop management platform with inventory tracking, payment processing, and granular access control across three user roles.",
+  "description": "A full-stack web application for managing a sweet shop's inventory, users, roles, and payments with JWT authentication, Google SSO, email verification, and PDF reporting.",
+  "featuredRank": 5,
+  "scope": "personal",
+  "status": "completed",
+  "role": "Solo Developer",
+  "teamSize": 1,
+  "duration": "5 months",
+  "year": 2026,
+  "completedAt": "2026-01",
+  "technologies": [
+    "React",
+    "Vite",
+    "Tailwind CSS",
+    "Node.js",
+    "Express",
+    "MongoDB",
+    "Mongoose",
+    "JWT",
+    "Google OAuth",
+    "Nodemailer",
+    "Mailgen",
+    "Jest",
+    "Supertest",
+    "react-to-print"
+  ],
+  "outcomes": [
+    "Built a granular RBAC system with three distinct roles — Admin, Staff, and Customer — each with permission-gated features",
+    "Implemented secure JWT authentication with access/refresh token rotation, email verification, and Google SSO",
+    "Designed a staff approval workflow where admins review accounts before granting inventory edit permissions",
+    "Developed inventory management with real-time stock tracking, production task assignment, and printable PDF reports"
+  ],
+  "metrics": [
+    { "label": "API Endpoints", "value": "30+" },
+    { "label": "Database Models", "value": "4" },
+    { "label": "User Roles", "value": "3" },
+    { "label": "Auth Methods", "value": "Email + Google SSO" },
+    { "label": "Payment Methods", "value": "UPI, Card, Netbanking, Cash" }
+  ],
+  "github": "https://github.com/Prashant29062003/sweet-shop-management-system",
+  "liveUrl": "https://my-sweet-shop.netlify.app",
+  "image": "/images/projects/sweet-shop-management-system.jpg"
+}
