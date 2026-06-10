@@ -1,6 +1,7 @@
 ﻿import { ImageResponse } from "next/og";
+import { SITE } from "@/lib/constants";
 
-export const alt = "Prashant Kumar \u2014 Backend Engineer";
+export const alt = `${SITE.name} \u2014 ${SITE.title}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -20,9 +21,7 @@ export default function OGImage() {
         fontFamily: "Inter",
       }}
     >
-      <p style={{ fontSize: 24, color: "#A1A1AA", margin: 0 }}>
-        Backend Engineer
-      </p>
+      <p style={{ fontSize: 24, color: "#A1A1AA", margin: 0 }}>{SITE.title}</p>
       <h1
         style={{
           fontSize: 64,
@@ -31,7 +30,7 @@ export default function OGImage() {
           letterSpacing: "-0.02em",
         }}
       >
-        Prashant Kumar
+        {SITE.name}
       </h1>
       <p
         style={{

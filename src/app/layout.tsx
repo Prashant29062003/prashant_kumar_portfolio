@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "next-themes";
 import Header from "@/components/layout/Header";
+import { SITE } from "@/lib/constants";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -13,10 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://prashantkumar.dev"),
-  title: "Prashant Kumar \u2014 Backend Engineer",
-  description:
-    "Building authentication systems, backend APIs, and scalable SaaS foundations.",
+  metadataBase: new URL(SITE.url),
+  title: `${SITE.name} \u2014 ${SITE.title}`,
+  description: SITE.metaDescription,
 };
 
 export default function RootLayout({

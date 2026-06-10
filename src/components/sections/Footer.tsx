@@ -1,4 +1,5 @@
 ﻿import { Separator } from "@/components/ui/separator";
+import { SITE, SOCIAL } from "@/lib/constants";
 
 export default function Footer() {
   return (
@@ -7,13 +8,13 @@ export default function Footer() {
       <p className="text-sm">Available for opportunities.</p>
       <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
         <a
-          href="mailto:prashant.kumar.work@gmail.com"
+          href={`mailto:${SITE.email}`}
           className="hover:text-foreground transition-colors"
         >
           Email
         </a>
         <a
-          href="https://linkedin.com/in/prashantkumar"
+          href={SOCIAL.linkedin}
           target="_blank"
           rel="noopener noreferrer"
           className="hover:text-foreground transition-colors"
@@ -21,7 +22,7 @@ export default function Footer() {
           LinkedIn
         </a>
         <a
-          href="https://github.com/prashantkumar"
+          href={SOCIAL.github}
           target="_blank"
           rel="noopener noreferrer"
           className="hover:text-foreground transition-colors"
@@ -29,7 +30,7 @@ export default function Footer() {
           GitHub
         </a>
         <a
-          href="/resume.pdf"
+          href={SITE.resumeUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="hover:text-foreground transition-colors"

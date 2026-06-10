@@ -1,4 +1,7 @@
 ﻿import Container from "@/components/layout/Container";
+import { EMPLOYMENT } from "@/lib/constants";
+
+const entry = EMPLOYMENT.find((e) => e.current)!;
 
 export default function AboutPage() {
   return (
@@ -9,26 +12,26 @@ export default function AboutPage() {
         <section className="mt-10">
           <h2 className="text-xl font-semibold">Who I Am</h2>
           <p className="text-muted-foreground mt-3 leading-relaxed">
-            I build full-stack web applications — currently as a Full Stack
-            Developer Intern at E-Sutra Technologies — working with React.js,
-            Next.js, Node.js, TypeScript, MongoDB, and PostgreSQL on production
-            systems. My work spans authentication and authorization, database
-            schema design, API development, and architectural decisions that
-            influence long-term maintainability and scalability.
+            I build full-stack web applications — currently as a {entry.role} at{" "}
+            {entry.companyShort} — working with React.js, Next.js, Node.js,
+            TypeScript, MongoDB, and PostgreSQL on production systems. My work
+            spans authentication and authorization, database schema design, API
+            development, and architectural decisions that influence long-term
+            maintainability and scalability.
           </p>
         </section>
 
         <section className="mt-10">
           <h2 className="text-xl font-semibold">Experience</h2>
           <p className="text-muted-foreground mt-3 leading-relaxed">
-            I&apos;m currently a Full Stack Developer Intern at E-Sutra
-            Technologies Private Limited (Jan 2026 &ndash; Present),
-            contributing to production web applications used in real-world
-            environments. My work includes developing and integrating REST APIs,
-            implementing frontend features, improving existing UI components,
-            investigating and resolving frontend and backend issues, and
-            collaborating with cross-functional teams through Agile development
-            workflows using Jira.
+            I&apos;m currently a {entry.role} at {entry.company} (
+            {entry.startDate} &ndash; {entry.endDate}), contributing to
+            production web applications used in real-world environments. My work
+            includes developing and integrating REST APIs, implementing frontend
+            features, improving existing UI components, investigating and
+            resolving frontend and backend issues, and collaborating with
+            cross-functional teams through Agile development workflows using
+            Jira.
           </p>
         </section>
         <section className="mt-6">

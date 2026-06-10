@@ -1,17 +1,12 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import ThemeToggle from "./ThemeToggle";
-
-const links = [
-  { href: "/", label: "Home" },
-  { href: "/projects", label: "Projects" },
-  { href: "/about", label: "About" },
-];
+import { SITE, NAVIGATION } from "@/lib/constants";
 
 export default function Navigation() {
   return (
     <nav className="flex items-center gap-6 text-sm font-medium">
-      {links.map((link) => (
+      {NAVIGATION.map((link) => (
         <Link
           key={link.href}
           href={link.href}
@@ -22,7 +17,7 @@ export default function Navigation() {
       ))}
       <ThemeToggle />
       <Button variant="outline" size="sm" asChild className="rounded-full">
-        <a href="/resume.pdf" target="_blank" rel="noopener noreferrer">
+        <a href={SITE.resumeUrl} target="_blank" rel="noopener noreferrer">
           Resume
         </a>
       </Button>

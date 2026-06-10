@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Navigation from "./Navigation";
 import Container from "./Container";
+import { SITE } from "@/lib/constants";
 
 export default function Header() {
   return (
@@ -8,7 +9,7 @@ export default function Header() {
       <Container>
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="text-lg font-semibold tracking-tight">
-            Prashant Kumar
+            {SITE.name}
           </Link>
           <Navigation />
         </div>
