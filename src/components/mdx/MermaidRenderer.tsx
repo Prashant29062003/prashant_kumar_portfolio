@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import mermaid from "mermaid";
+
+const svgCache = new Map<string, string>();
 
 interface MermaidRendererProps {
   code: string;
@@ -12,41 +14,76 @@ export function MermaidRenderer({ code }: MermaidRendererProps) {
   const [svgHtml, setSvgHtml] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
   const { resolvedTheme } = useTheme();
-  const initialized = useRef(false);
   const idRef = useRef<string | null>(null);
+  const theme = resolvedTheme === "dark" ? "dark" : "base";
+
+  const normalizedCode = useMemo(() => code.trim(), [code]);
+
+  const cacheKey = useMemo(
+    () => `${normalizedCode}::${theme}`,
+    [normalizedCode, theme]
+  );
+
+  const cachedSvg = svgCache.get(cacheKey);
 
   useEffect(() => {
     if (!idRef.current) {
-      idRef.current = "m-" + Math.random().toString(36).slice(2, 9);
+      idRef.current = `m-${crypto.randomUUID()}`;
+    }
+  }, []);
+
+  useEffect(() => {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme,
+      securityLevel: "loose",
+    });
+  }, [theme]);
+
+  useEffect(() => {
+    if (cachedSvg) {
+      return;
     }
 
-    const theme = resolvedTheme === "dark" ? "dark" : "base";
-
-    if (!initialized.current) {
-      mermaid.initialize({
-        startOnLoad: false,
-        theme,
-        securityLevel: "loose",
-      });
-      initialized.current = true;
+    if (!idRef.current) {
+      return;
     }
+
+    setHasError(false);
+
+    let cancelled = false;
 
     const renderDiagram = async () => {
       try {
         const { svg } = await mermaid.render(
-          idRef.current + "-svg",
-          code.trim()
+          `${idRef.current}-svg`,
+          normalizedCode
         );
+
+        if (cancelled) {
+          return;
+        }
+
+        svgCache.set(cacheKey, svg);
         setSvgHtml(svg);
         setHasError(false);
       } catch (error) {
+        if (cancelled) {
+          return;
+        }
+
         console.error("Mermaid parsing failure:", error);
+        setSvgHtml(null);
         setHasError(true);
       }
     };
 
-    renderDiagram();
-  }, [code, resolvedTheme]);
+    void renderDiagram();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [cachedSvg, cacheKey, normalizedCode]);
 
   if (hasError) {
     return (
@@ -57,7 +94,9 @@ export function MermaidRenderer({ code }: MermaidRendererProps) {
     );
   }
 
-  if (!svgHtml) {
+  const svgToRender = cachedSvg ?? svgHtml;
+
+  if (!svgToRender) {
     return (
       <div className="bg-muted my-8 h-32 w-full animate-pulse rounded-xl" />
     );
@@ -66,7 +105,7 @@ export function MermaidRenderer({ code }: MermaidRendererProps) {
   return (
     <div
       className="bg-muted/20 my-8 w-full overflow-x-auto rounded-xl p-6"
-      dangerouslySetInnerHTML={{ __html: svgHtml }}
+      dangerouslySetInnerHTML={{ __html: svgToRender }}
     />
   );
 }

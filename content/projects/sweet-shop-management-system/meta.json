@@ -4,7 +4,7 @@
   "title": "Sweet Shop Management System",
   "summary": "A full-stack role-based sweet shop management platform with inventory tracking, payment processing, and granular access control across three user roles.",
   "description": "A full-stack web application for managing a sweet shop's inventory, users, roles, and payments with JWT authentication, Google SSO, email verification, and PDF reporting.",
-  "featuredRank": 5,
+  "featuredRank": 20,
   "scope": "personal",
   "status": "completed",
   "role": "Solo Developer",
