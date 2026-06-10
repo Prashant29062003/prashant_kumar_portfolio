@@ -5,12 +5,12 @@
         Prashant Kumar
       </h1>
       <p className="text-muted-foreground mt-3 text-lg">
-        Software Engineer focused on authentication, authorization, and scalable
-        backend systems.
+        Software Engineer focused on backend systems, authentication, and
+        scalable web applications.
       </p>
       <p className="text-muted-foreground mt-6 max-w-lg text-base leading-relaxed">
-        Currently building authentication systems, backend APIs, and
-        multi-tenant foundations.
+        Building production web applications with React, Next.js, Node.js,
+        TypeScript, PostgreSQL, and MongoDB.
       </p>
     </section>
   );

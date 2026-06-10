@@ -9,23 +9,37 @@ export default function AboutPage() {
         <section className="mt-10">
           <h2 className="text-xl font-semibold">Who I Am</h2>
           <p className="text-muted-foreground mt-3 leading-relaxed">
-            I build full-stack web applications — from React and Next.js
-            frontends to Node.js APIs backed by both SQL and NoSQL databases. My
-            work spans authentication systems (JWT, OAuth2, RBAC), database
-            schema design, and clean architecture decisions that compound over
-            time.
+            I build full-stack web applications — currently as a Full Stack
+            Developer Intern at E-Sutra Technologies — working with React.js,
+            Next.js, Node.js, TypeScript, MongoDB, and PostgreSQL on production
+            systems. My work spans authentication and authorization, database
+            schema design, API development, and architectural decisions that
+            influence long-term maintainability and scalability.
           </p>
         </section>
 
         <section className="mt-10">
           <h2 className="text-xl font-semibold">Experience</h2>
           <p className="text-muted-foreground mt-3 leading-relaxed">
-            I&apos;ve built and deployed three projects end-to-end: a PG
-            accommodation discovery platform (Next.js, Drizzle, PostgreSQL,
-            Clerk), a sweet shop management system (React, Express, MongoDB,
-            JWT), and a multi-vendor food ordering UI (Next.js, React). Each
-            project covers the full stack — from database schema and API design
-            to responsive UIs and deployment.
+            I&apos;m currently a Full Stack Developer Intern at E-Sutra
+            Technologies Private Limited (Jan 2026 &ndash; Present),
+            contributing to production web applications used in real-world
+            environments. My work includes developing and integrating REST APIs,
+            implementing frontend features, improving existing UI components,
+            investigating and resolving frontend and backend issues, and
+            collaborating with cross-functional teams through Agile development
+            workflows using Jira.
+          </p>
+        </section>
+        <section className="mt-6">
+          <p className="text-muted-foreground leading-relaxed">
+            Alongside professional work, I&apos;ve built and deployed several
+            personal projects end-to-end, including a PG accommodation discovery
+            platform, a sweet shop management system, and a multi-vendor food
+            ordering platform. These projects span database design, API
+            development, authentication, responsive user interfaces, deployment,
+            and ongoing maintenance, helping me develop a strong full-stack
+            engineering foundation.
           </p>
         </section>
 
