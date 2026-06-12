@@ -10,7 +10,7 @@ type Props = {
 
 export default async function ProjectOGImage({ params }: Props) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
 
   const title = project?.title ?? "Project";
   const summary = project?.summary ?? "";

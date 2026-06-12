@@ -1,10 +1,16 @@
-import { sqliteTable, text, integer, check } from "drizzle-orm/sqlite-core";
+import {
+  sqliteTable,
+  text,
+  integer,
+  check,
+  index,
+} from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
 export const projects = sqliteTable(
   "projects",
   {
-    slug: text("slug").primaryKey(),
+    slug: text("slug").primaryKey().notNull(),
     title: text("title").notNull(),
     summary: text("summary").notNull(),
     description: text("description").notNull(),
@@ -35,5 +41,7 @@ export const projects = sqliteTable(
       "visibility_check",
       sql`${table.visibility} IN ('draft', 'published', 'archived')`
     ),
+    visibilityIdx: index("visibility_idx").on(table.visibility),
+    featuredRankIdx: index("featured_rank_idx").on(table.featuredRank),
   })
 );

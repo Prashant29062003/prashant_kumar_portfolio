@@ -2,8 +2,8 @@
 import ProjectCard from "@/components/cards/ProjectCard";
 import { getAllProjects } from "@/lib/content/projects";
 
-export default function ProjectsPage() {
-  const projects = getAllProjects();
+export default async function ProjectsPage() {
+  const projects = await getAllProjects();
 
   return (
     <Container className="py-16">
@@ -13,7 +13,7 @@ export default function ProjectsPage() {
       </p>
       <div className="mt-10 grid gap-6 sm:grid-cols-2">
         {projects.map((project) => (
-          <ProjectCard key={project.id} project={project} />
+          <ProjectCard key={project.slug} project={project} />
         ))}
       </div>
     </Container>
