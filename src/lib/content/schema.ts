@@ -6,25 +6,27 @@ export const MetricSchema = z.object({
 });
 
 export const ProjectSchema = z.object({
-  id: z.string(),
   slug: z.string(),
   title: z.string(),
   summary: z.string(),
   description: z.string(),
-  featuredRank: z.number().optional(),
-  scope: z.enum(["personal", "client", "professional"]),
-  status: z.enum(["active", "completed", "archived"]),
+  body: z.string(),
   role: z.string(),
-  teamSize: z.number().optional(),
+  scope: z.enum(["personal", "client", "professional"]),
+  status: z.enum(["completed", "in_progress"]),
+  visibility: z.enum(["draft", "published", "archived"]),
   duration: z.string().optional(),
+  teamSize: z.number().optional(),
   year: z.number(),
-  completedAt: z.string().optional(),
+  githubUrl: z.string().optional(),
+  liveUrl: z.string().optional(),
+  imageUrl: z.string().optional(),
   technologies: z.array(z.string()),
   outcomes: z.array(z.string()).optional(),
   metrics: z.array(MetricSchema).optional(),
-  github: z.string().optional(),
-  liveUrl: z.string().optional(),
-  image: z.string().optional(),
+  featuredRank: z.number().optional(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 });
 
 export type Project = z.infer<typeof ProjectSchema>;

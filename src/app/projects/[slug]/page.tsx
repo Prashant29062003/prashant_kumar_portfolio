@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Container from "@/components/layout/Container";
-import { getProjectBySlug, getProjectContent } from "@/lib/content/projects";
+import { getProjectBySlug } from "@/lib/content/projects";
 import MdxContent from "@/components/mdx/MdxContent";
 
 type Props = {
@@ -12,11 +12,8 @@ type Props = {
 
 export default async function ProjectDetailPage({ params }: Props) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
   if (!project) notFound();
-
-  const rawMdxSource = getProjectContent(slug);
-  if (!rawMdxSource) notFound();
 
   return (
     <Container className="py-16">
@@ -63,7 +60,7 @@ export default async function ProjectDetailPage({ params }: Props) {
           </Card>
         </header>
         <section className="article-body">
-          <MdxContent source={rawMdxSource} />
+          <MdxContent source={project.body} />
         </section>
       </article>
     </Container>

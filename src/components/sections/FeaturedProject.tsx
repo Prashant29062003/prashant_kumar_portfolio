@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { getFeaturedProjects } from "@/lib/content/projects";
 
-export default function FeaturedProject() {
-  const featured = getFeaturedProjects()[0];
+export default async function FeaturedProject() {
+  const featuredList = await getFeaturedProjects();
+  const featured = featuredList[0];
   if (!featured) return null;
 
   return (
