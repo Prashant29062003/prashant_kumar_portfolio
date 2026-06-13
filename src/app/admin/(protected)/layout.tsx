@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LayoutDashboard, FolderKanban, ExternalLink } from "lucide-react";
 import { enforceAdminAuth } from "@/lib/admin/auth";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import ThemeToggle from "@/components/layout/ThemeToggle";
 import { logout } from "@/app/actions/logout";
 
@@ -24,7 +25,7 @@ export default async function AdminLayout({
               <LayoutDashboard className="h-4 w-4" />
               Admin
             </Link>
-            <span className="bg-border mx-1 inline-block h-4 w-px" />
+            <Separator orientation="vertical" className="mx-1 h-4" />
             <nav className="text-muted-foreground flex items-center gap-0.5 text-sm">
               <Link
                 href="/admin/projects"
@@ -45,7 +46,7 @@ export default async function AdminLayout({
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <span className="bg-border inline-block h-4 w-px" />
+            <Separator orientation="vertical" className="h-4" />
             <form action={logout}>
               <Button type="submit" variant="ghost" size="sm">
                 Logout
