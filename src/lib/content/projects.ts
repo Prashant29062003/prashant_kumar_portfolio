@@ -1,8 +1,8 @@
 ﻿import { unstable_cache } from "next/cache";
-import { eq, and, isNotNull, asc, desc } from "drizzle-orm";
+import { eq, and, asc, desc } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { projects } from "@/lib/db/schema";
-import type { Project } from "./schema";
+import type { Project, AdminProject } from "./types";
 
 function toProject(row: typeof projects.$inferSelect): Project {
   return {
@@ -15,18 +15,25 @@ function toProject(row: typeof projects.$inferSelect): Project {
     scope: row.scope as Project["scope"],
     status: row.status as Project["status"],
     visibility: row.visibility as Project["visibility"],
-    duration: row.duration ?? undefined,
-    teamSize: row.teamSize ?? undefined,
+    duration: row.duration ?? null,
+    teamSize: row.teamSize ?? null,
     year: row.year,
-    githubUrl: row.githubUrl ?? undefined,
-    liveUrl: row.liveUrl ?? undefined,
-    imageUrl: row.imageUrl ?? undefined,
+    githubUrl: row.githubUrl ?? null,
+    liveUrl: row.liveUrl ?? null,
+    imageUrl: row.imageUrl ?? null,
     technologies: JSON.parse(row.technologies),
-    outcomes: row.outcomes ? JSON.parse(row.outcomes) : undefined,
-    metrics: row.metrics ? JSON.parse(row.metrics) : undefined,
-    featuredRank: row.featuredRank ?? undefined,
+    outcomes: row.outcomes ? JSON.parse(row.outcomes) : [],
+    metrics: row.metrics ? JSON.parse(row.metrics) : [],
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
+  };
+}
+
+function toAdminProject(row: typeof projects.$inferSelect): AdminProject {
+  return {
+    ...toProject(row),
+    id: row.id,
+    isFeatured: row.isFeatured,
   };
 }
 
@@ -49,12 +56,9 @@ export const getFeaturedProjects = unstable_cache(
       .select()
       .from(projects)
       .where(
-        and(
-          eq(projects.visibility, "published"),
-          isNotNull(projects.featuredRank)
-        )
+        and(eq(projects.visibility, "published"), eq(projects.isFeatured, true))
       )
-      .orderBy(asc(projects.featuredRank));
+      .limit(1);
     return rows.map(toProject);
   },
   ["projects-featured"],
@@ -74,11 +78,11 @@ export const getProjectBySlug = unstable_cache(
   { tags: ["projects"] }
 );
 
-export async function getProjectBySlugAdmin(slug: string) {
+export async function getProjectByIdAdmin(id: string) {
   const rows = await db
     .select()
     .from(projects)
-    .where(eq(projects.slug, slug))
+    .where(eq(projects.id, id))
     .limit(1);
-  return rows[0] ? toProject(rows[0]) : undefined;
+  return rows[0] ? toAdminProject(rows[0]) : undefined;
 }

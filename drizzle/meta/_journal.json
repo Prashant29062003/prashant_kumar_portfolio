@@ -15,6 +15,27 @@
       "when": 1781294578968,
       "tag": "0001_brief_stature",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1781326016472,
+      "tag": "0002_amazing_absorbing_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1781353009058,
+      "tag": "0003_fat_the_enforcers",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1781326016472,
+      "tag": "0003_fat_the_enforcers",
+      "breakpoints": true
     }
   ]
 }
