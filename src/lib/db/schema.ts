@@ -10,7 +10,8 @@ import { sql } from "drizzle-orm";
 export const projects = sqliteTable(
   "projects",
   {
-    slug: text("slug").primaryKey().notNull(),
+    id: text("id").primaryKey(),
+    slug: text("slug").notNull().unique(),
     title: text("title").notNull(),
     summary: text("summary").notNull(),
     description: text("description").notNull(),
@@ -28,9 +29,12 @@ export const projects = sqliteTable(
     technologies: text("technologies").notNull(),
     outcomes: text("outcomes"),
     metrics: text("metrics"),
-    featuredRank: integer("featured_rank"),
+    isFeatured: integer("is_featured", { mode: "boolean" })
+      .notNull()
+      .default(false),
     createdAt: text("created_at").notNull(),
     updatedAt: text("updated_at").notNull(),
+    publishedAt: text("published_at"),
   },
   (table) => ({
     statusCheck: check(
@@ -42,6 +46,6 @@ export const projects = sqliteTable(
       sql`${table.visibility} IN ('draft', 'published', 'archived')`
     ),
     visibilityIdx: index("visibility_idx").on(table.visibility),
-    featuredRankIdx: index("featured_rank_idx").on(table.featuredRank),
+    isFeaturedIdx: index("is_featured_idx").on(table.isFeatured),
   })
 );

@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import { db } from "@/lib/db/client";
@@ -44,6 +45,7 @@ async function main() {
     const now = new Date().toISOString();
 
     const record = {
+      id: crypto.randomUUID(),
       slug: raw.slug,
       title: raw.title,
       summary: raw.summary,
@@ -60,20 +62,22 @@ async function main() {
       liveUrl: raw.liveUrl ?? null,
       imageUrl: raw.image ?? null,
       technologies: JSON.stringify(raw.technologies ?? []),
-      outcomes: raw.outcomes ? JSON.stringify(raw.outcomes) : null,
-      metrics: raw.metrics ? JSON.stringify(raw.metrics) : null,
-      featuredRank: raw.featuredRank ?? null,
+      outcomes: JSON.stringify(raw.outcomes ?? []),
+      metrics: JSON.stringify(raw.metrics ?? []),
+      isFeatured: false,
       createdAt: now,
       updatedAt: now,
+      publishedAt: now,
     };
 
+    const { createdAt: _createdAt, ...updateFields } = record;
     await db
       .insert(projects)
       .values(record)
       .onConflictDoUpdate({
         target: projects.slug,
         set: {
-          ...record,
+          ...updateFields,
           updatedAt: now,
         },
       });
