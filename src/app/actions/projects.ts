@@ -195,21 +195,23 @@ export async function updateProject(
 export async function toggleFeatured(id: string) {
   await enforceAdminAuth();
 
-  const curr = await db
-    .select({ isFeatured: projects.isFeatured })
-    .from(projects)
-    .where(eq(projects.id, id))
-    .limit(1);
+  const target = await db.query.projects.findFirst({
+    where: eq(projects.id, id),
+    columns: { isFeatured: true },
+  });
 
-  if (!curr.length) return;
+  if (!target) throw new Error("Project not found");
 
-  if (curr[0].isFeatured) {
+  if (target.isFeatured) {
     await db
       .update(projects)
       .set({ isFeatured: false, updatedAt: new Date().toISOString() })
       .where(eq(projects.id, id));
   } else {
-    await db.update(projects).set({ isFeatured: false });
+    await db
+      .update(projects)
+      .set({ isFeatured: false })
+      .where(eq(projects.isFeatured, true));
     await db
       .update(projects)
       .set({ isFeatured: true, updatedAt: new Date().toISOString() })
