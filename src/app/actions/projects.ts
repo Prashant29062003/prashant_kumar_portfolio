@@ -47,8 +47,13 @@ function formDataToProject(formData: FormData) {
     role: (formData.get("role") as string) || "",
     scope: (formData.get("scope") as string) || "personal",
     status: (formData.get("status") as string) || "in_progress",
-    visibility:
-      (formData.get("_action") as string) === "publish" ? "published" : "draft",
+    visibility: (() => {
+      const action = formData.get("_action") as string;
+      if (action === "publish") return "published";
+      if (action === "save")
+        return (formData.get("currentVisibility") as string) || "draft";
+      return "draft";
+    })(),
     duration: (formData.get("duration") as string) || null,
     teamSize: (formData.get("teamSize") as string)
       ? Number(formData.get("teamSize"))

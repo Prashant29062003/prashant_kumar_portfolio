@@ -49,6 +49,13 @@ export default function ProjectForm({ project, action }: Props) {
   return (
     <form action={formAction} className="space-y-8">
       {project?.id && <input type="hidden" name="id" value={project.id} />}
+      {project && (
+        <input
+          type="hidden"
+          name="currentVisibility"
+          value={project.visibility}
+        />
+      )}
 
       {state?.message && (
         <div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">
@@ -197,6 +204,7 @@ export default function ProjectForm({ project, action }: Props) {
             name="githubUrl"
             type="url"
             defaultValue={val("githubUrl")}
+            placeholder="https://github.com/..."
           />
         </div>
         <div className="space-y-2">
@@ -206,6 +214,7 @@ export default function ProjectForm({ project, action }: Props) {
             name="liveUrl"
             type="url"
             defaultValue={val("liveUrl")}
+            placeholder="https://..."
           />
         </div>
         <div className="space-y-2">
@@ -213,8 +222,9 @@ export default function ProjectForm({ project, action }: Props) {
           <Input
             id="imageUrl"
             name="imageUrl"
-            type="url"
+            type="text"
             defaultValue={val("imageUrl")}
+            placeholder="https://..."
           />
         </div>
       </div>
@@ -320,16 +330,28 @@ export default function ProjectForm({ project, action }: Props) {
       </div>
 
       <div className="border-border/40 bg-background sticky bottom-0 z-40 flex items-center gap-3 border-t py-4">
+        {project && (
+          <Button type="submit" name="_action" value="save">
+            Save
+          </Button>
+        )}
         <Button type="submit" name="_action" value="draft" variant="outline">
-          Save Draft
+          Save as Draft
         </Button>
-        <Button
-          type="submit"
-          name="_action"
-          value={project?.visibility === "published" ? "unpublish" : "publish"}
-        >
-          {project?.visibility === "published" ? "Unpublish" : "Publish"}
-        </Button>
+        {project?.visibility !== "published" ? (
+          <Button type="submit" name="_action" value="publish">
+            Publish
+          </Button>
+        ) : (
+          <Button
+            type="submit"
+            name="_action"
+            value="unpublish"
+            variant="outline"
+          >
+            Unpublish
+          </Button>
+        )}
       </div>
     </form>
   );

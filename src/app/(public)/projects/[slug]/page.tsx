@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Code2, ExternalLink } from "lucide-react";
 import Container from "@/components/layout/Container";
 import { getProjectBySlug } from "@/lib/content/projects";
 import MdxContent from "@/components/mdx/MdxContent";
@@ -58,6 +60,34 @@ export default async function ProjectDetailPage({ params }: Props) {
               </div>
             </CardContent>
           </Card>
+          {(project.githubUrl || project.liveUrl) && (
+            <div className="mt-6 flex flex-wrap gap-3">
+              {project.githubUrl && (
+                <Button asChild>
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Code2 className="mr-2 h-4 w-4" />
+                    View Source
+                  </a>
+                </Button>
+              )}
+              {project.liveUrl && (
+                <Button variant="outline" asChild>
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    Live Site
+                  </a>
+                </Button>
+              )}
+            </div>
+          )}
         </header>
         <section className="article-body">
           <MdxContent source={project.body} />
