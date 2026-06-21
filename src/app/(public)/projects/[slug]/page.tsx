@@ -1,16 +1,40 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { eq } from "drizzle-orm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Code2, ExternalLink } from "lucide-react";
 import Container from "@/components/layout/Container";
+import { db } from "@/lib/db/client";
+import { projects } from "@/lib/db/schema";
 import { getProjectBySlug } from "@/lib/content/projects";
+import { SITE } from "@/lib/constants";
 import MdxContent from "@/components/mdx/MdxContent";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
+
+export async function generateStaticParams() {
+  const rows = await db
+    .select({ slug: projects.slug })
+    .from(projects)
+    .where(eq(projects.visibility, "published"));
+
+  return rows.map((p) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
+  if (!project) return {};
+  return {
+    title: `${project.title} — ${SITE.name}`,
+    description: project.summary,
+  };
+}
 
 export default async function ProjectDetailPage({ params }: Props) {
   const { slug } = await params;
