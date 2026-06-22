@@ -8,6 +8,9 @@ const envSchema = z.object({
   TURSO_AUTH_TOKEN: z.string().min(1),
   ADMIN_PASSWORD: z.string().min(8),
   ADMIN_SESSION_SECRET: z.string().min(16),
+  IMAGEKIT_PUBLIC_KEY: z.string().min(1),
+  IMAGEKIT_PRIVATE_KEY: z.string().min(1),
+  IMAGEKIT_URL_ENDPOINT: z.string().url(),
 });
 
 const _env = envSchema.safeParse(process.env);
